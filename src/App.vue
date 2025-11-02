@@ -29,7 +29,7 @@
 
     <div v-if="result !== null" class="result">
       <div class="result-wrapper">
-        <span class="total">{{ result }}</span>
+        <span class="total" :class="{ invalid: isInvalid }">{{ result }}</span>
         <div v-if="resultBreakdown" class="breakdown below">{{ resultBreakdown }}</div>
       </div>
     </div>
@@ -69,7 +69,7 @@
         </div>
 
         <div class="roll-result" v-if="roll.result !== null">
-          <span class="total">{{ roll.result }}</span>
+          <span class="total" :class="{ invalid: roll.isInvalid }">{{ roll.result }}</span>
           <span v-if="roll.breakdown" class="breakdown">{{ roll.breakdown }}</span>
         </div>
       </div>
@@ -83,6 +83,7 @@ import { ref } from 'vue'
 const formula = ref('')
 const result = ref(null)
 const resultBreakdown = ref('')
+const isInvalid = ref(false)
 const rolls = ref([])
 
 function strip(string) {
@@ -142,14 +143,16 @@ function executeRoll(parts) {
 function rollDice() {
   const parsed = parseFormula(formula.value)
   if (!parsed) {
-    result.value = 'Invalid format'
-    resultBreakdown.value = ''
+    result.value = formula.value === '' ? 'Type a Formula' : 'Invalid Format'
+    resultBreakdown.value = 'Examples: d20, 2d6, d10-2, d10+d4'
+    isInvalid.value = true
     return
   }
 
   const { total, breakdown } = executeRoll(parsed)
   result.value = total
   resultBreakdown.value = breakdown
+  isInvalid.value = false
 }
 
 function save() {
@@ -165,13 +168,15 @@ function reroll(index) {
   const r = rolls.value[index]
   const parsed = parseFormula(r.formula)
   if (!parsed) {
-    r.result = 'Invalid format'
+    r.result = r.formula === '' ? 'Type a Formula' : 'Invalid Format'
     r.breakdown = ''
+    r.isInvalid = true
     return
   }
   const { total, breakdown } = executeRoll(parsed)
   r.result = total
   r.breakdown = breakdown
+  r.isInvalid = false
 }
 
 function clear() {
@@ -198,6 +203,7 @@ function deleteRoll(index) {
   --muted: #aaa;
   --accent: #2d6cdf;
   --accent-hover: #1c4cad;
+  --red: #e74c3c;
   --font: 'Segoe UI', 'Helvetica Neue', 'Arial', 'Verdana', sans-serif;
 }
 
@@ -290,6 +296,11 @@ button:hover {
   font-weight: 700;
 }
 
+.invalid {
+  font-size: 2rem;
+  color: var(--red);
+}
+
 .breakdown.below {
   margin-left: 0;
   margin-top: 0.3rem;
@@ -370,7 +381,7 @@ button:hover {
 }
 
 .delete {
-  color: #e74c3c;
-  border-color: #e74c3c;
+  color: var(--red);
+  border-color: var(--red);
 }
 </style>
