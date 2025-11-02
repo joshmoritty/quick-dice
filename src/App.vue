@@ -116,6 +116,11 @@ function parseFormula(f) {
       if (flat) {
         const sign = flat[1] === '-' ? -1 : 1
         const value = parseInt(flat[2])
+
+        if (groups.length === 1 && sign === 1 && flat[1] !== '+') {
+          return { type: 'dice', sign, count: 1, sides: value }
+        }
+
         return { type: 'modifier', sign, value }
       }
 
@@ -136,7 +141,7 @@ function executeRoll(parts) {
       segments.push(`${p.sign < 0 ? '- ' : segments.length > 0 ? '+ ' : ''}[${rolls.join(', ')}]`)
     } else if (p.type === 'modifier') {
       total += p.value * p.sign
-      segments.push(`${p.sign < 0 ? '- ' : '+ '}${p.value}`)
+      segments.push(`${p.sign < 0 ? '- ' : segments.length > 0 ? '+ ' : ''}${p.value}`)
     }
   }
 
