@@ -372,6 +372,7 @@ button:hover {
 .roll-result {
   display: flex;
   gap: 0.6rem;
+  justify-content: center;
   align-items: baseline;
   font-size: 2rem;
   font-weight: 600;
