@@ -37,12 +37,7 @@
     <div v-if="rolls.length" class="history">
       <div v-for="(roll, index) in rolls" :key="index" class="roll-card">
         <div class="top-row">
-          <input
-            v-model="roll.name"
-            class="roll-name-input"
-            placeholder="Roll Name"
-            @input="clearResult(roll)"
-          />
+          <input v-model="roll.name" class="roll-name-input" placeholder="Roll Name" />
           <div class="roll-details">
             <input
               v-model="roll.formula"
@@ -78,13 +73,26 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 
 const formula = ref('')
 const result = ref(null)
 const resultBreakdown = ref('')
 const isInvalid = ref(false)
 const rolls = ref([])
+
+watch(
+  rolls,
+  (val) => {
+    localStorage.setItem('rolls', JSON.stringify(val))
+  },
+  { deep: true },
+)
+
+onMounted(() => {
+  const saved = localStorage.getItem('rolls')
+  if (saved) rolls.value = JSON.parse(saved)
+})
 
 function strip(string) {
   return string.replace(/\s/gi, '')
