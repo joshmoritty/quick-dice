@@ -156,7 +156,7 @@ function executeRoll(parts) {
 function rollDice() {
   const parsed = parseFormula(formula.value)
   if (!parsed) {
-    result.value = formula.value === '' ? 'Type a Formula' : 'Invalid Format'
+    result.value = formula.value === '' ? 'Enter a Formula' : 'Invalid Format'
     resultBreakdown.value = 'Examples: d20, 2d6, d10-2, d10+d4'
     isInvalid.value = true
     return
@@ -181,7 +181,7 @@ function reroll(index) {
   const r = rolls.value[index]
   const parsed = parseFormula(r.formula)
   if (!parsed) {
-    r.result = r.formula === '' ? 'Type a Formula' : 'Invalid Format'
+    r.result = r.formula === '' ? 'Enter a Formula' : 'Invalid Format'
     r.breakdown = ''
     r.isInvalid = true
     return
